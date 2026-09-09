@@ -8,6 +8,7 @@ const generateToken = (id) =>{
 };
 
 const registerUser = async (req,res) =>{
+    console.log("REGISTER DATA:", req.body);
     const{name,email,password }= req.body;
     try{
         const existingUser = await User.findOne({email});
@@ -17,12 +18,13 @@ const registerUser = async (req,res) =>{
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password,salt);
 
-        const user = User.create({name,email,password:hashedPassword});
+        const user = await User.create({name,email,password:hashedPassword});
         if(user){
             const otp = Math.floor(100000 + Math.random() * 900000).toString();
             const message= `welcome to Shopix! Your OTP is ${otp}`;
 
-            await sendEmail(email,"welcome to shopix - your OTP for Registration",message);
+           // await sendEmail(email,"welcome to shopix - your OTP for Registration",message);
+           sendEmail(email,"welcome to shopix - your OTP for Registration",message).catch(err=> console.log(err));
 
             res.status(201).json({
                 _id:user._id,
@@ -37,6 +39,7 @@ const registerUser = async (req,res) =>{
             res.status(400).json({message:"Invalid user data"});
         }
     }catch(error){
+        console.error(error);
         res.status(500).json({message:"Server error"});
     }
 };
@@ -45,7 +48,7 @@ const registerUser = async (req,res) =>{
 const loginUser = async(req,res) =>{
     const{email,password}= req.body;
     try{
-      const user = await User.find({email});
+      const user = await User.findOne({email});
       if(user && (await bcrypt.compare(password,user.password))){
         res.json({
             _id:user._id,
