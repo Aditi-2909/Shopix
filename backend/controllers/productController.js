@@ -250,17 +250,54 @@ const createProduct = async (req, res) => {
     }
 };
 
+// const updateProduct = async (req, res) => {
+//     try {
+//         const product = await Product.findById(req.params.id);
+//         if (!product) return res.status(404).json({ message: "Product not found" });
+
+//         const { name, price, description, category, stock } = req.body;
+//         product.name = name || product.name;
+//         product.price = price || product.price;
+//         product.description = description || product.description;
+//         product.category = category || product.category;
+//         product.stock = stock || product.stock;
+
+//         if (req.file) {
+//             const formData = new FormData();
+//             const blob = new Blob([req.file.buffer], { type: req.file.mimetype });
+//             formData.append("file", blob, req.file.originalname);
+//             formData.append("upload_preset", "shopix_unsigned");
+//             formData.append("folder", "shopix");
+//             const cloudRes = await fetch(
+//                 `https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload`,
+//                 { method: "POST", body: formData }
+//             );
+//             const result = await cloudRes.json();
+//             product.imageUrl = result.secure_url;
+//         }
+
+//         const updated = await product.save();
+//         res.json(updated);
+//     } catch (error) {
+//         res.status(500).json({ message: error.message });
+//     }
+// };
+
+
+
 const updateProduct = async (req, res) => {
     try {
+        console.log("BODY:", req.body); // debug er jonno
+        console.log("FILE:", req.file);
+
         const product = await Product.findById(req.params.id);
         if (!product) return res.status(404).json({ message: "Product not found" });
 
-        const { name, price, description, category, stock } = req.body;
-        product.name = name || product.name;
-        product.price = price || product.price;
-        product.description = description || product.description;
-        product.category = category || product.category;
-        product.stock = stock || product.stock;
+        if(req.body.name) product.name = req.body.name;
+        if(req.body.price) product.price = req.body.price;
+        if(req.body.description) product.description = req.body.description;
+        if(req.body.category) product.category = req.body.category;
+        if(req.body.stock) product.stock = req.body.stock;
 
         if (req.file) {
             const formData = new FormData();
@@ -268,17 +305,19 @@ const updateProduct = async (req, res) => {
             formData.append("file", blob, req.file.originalname);
             formData.append("upload_preset", "shopix_unsigned");
             formData.append("folder", "shopix");
+
             const cloudRes = await fetch(
                 `https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload`,
                 { method: "POST", body: formData }
             );
             const result = await cloudRes.json();
-            product.imageUrl = result.secure_url;
+            if(result.secure_url) product.imageUrl = result.secure_url;
         }
 
-        const updated = await product.save();
-        res.json(updated);
+        const updatedProduct = await product.save();
+        res.json(updatedProduct); // eta single object debe, array na
     } catch (error) {
+        console.log(error);
         res.status(500).json({ message: error.message });
     }
 };
