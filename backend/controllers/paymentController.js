@@ -22,8 +22,21 @@ const createOrder = async(req , res) =>{
     
 };
 
-// const verifyPayment = async (req,res) =>{
-//     try{
-//         const{razorpay_order_id,razorpay_payment_id}
-//     }
-// }
+const verifyPayment = async (req,res) =>{
+    try{
+        const{razorpay_order_id,razorpay_payment_id,razorpay_signature} =req.body;
+        const generated_signature = crypto
+
+       .createHmac("sha256",process.env.RAZORPAY_KEY_SECRET)
+       .update(razorpay_order_id +" " +razorpay_payment_id)
+       .digst("hex");
+       if(generated_signature === razorpay_signature){
+        res.status(200).json({message:"payment verification suucessfully"});
+       }else{
+        res.status(400).json({message:"payment verification failed"});
+       }
+    }catch(error){
+        res.status(500).json({message:"Server error"});
+    }
+};
+module.exports = {createOrder , verifyPayment};
