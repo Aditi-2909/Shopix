@@ -7,6 +7,9 @@ import Privacy from './pages/Privacy'
 import Contact from './pages/Contact'
 import About from './pages/About'
 import ReturnPolicy from './pages/ReturnPolicy'
+import Login from './pages/Login'
+import Register from './pages/Register'
+import ProductDetail from './pages/ProductDetail'
 
 function App() {
   return (
@@ -18,6 +21,9 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/about" element={<About />} />
         <Route path="/return-policy" element={<ReturnPolicy />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/products/:id" element={<ProductDetail />} />
       </Routes>
       <Footer />
     </>

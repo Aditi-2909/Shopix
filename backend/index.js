@@ -9,12 +9,18 @@ dotenv.config();
 connectDB();
 
 const app = express();
-app.use(cors());
+app.use(cors(
+  {
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  }
+));
 app.use(express.json());
-app.use(express.urlencoded({extended:true}));
+app.use(express.urlencoded({ extended: true }));
 
-app.get("/",(req,res) => {
-    res.send("shopix Backend is working properly!");
+app.get("/", (req, res) => {
+  res.send("shopix Backend is working properly!");
 });
 
 app.use('/api/auth', require('./routes/authRoutes'));
@@ -34,7 +40,7 @@ app.use((err, req, res, next) => {
   next();
 });
 
-const PORT = process.env.PORT ||5000;
-app.listen(PORT,() => {
-    console.log(`Server is running on port ${PORT}`);
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });

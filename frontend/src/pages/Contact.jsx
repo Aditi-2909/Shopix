@@ -35,7 +35,7 @@ const Contact = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#f6f7ff] pt-[70px]">
+    <div className="min-h-screen bg-[#f6f7ff]">
       <div className="relative overflow-hidden bg-gradient-to-br from-yellow-50 via-white to-violet-100 border-b border-black/5">
         <div className="absolute top-10 left-10 h-64 w-64 rounded-full bg-yellow-300/30 blur-3xl"></div>
         <div className="absolute bottom-0 right-20 h-64 w-64 rounded-full bg-violet-400/30 blur-3xl"></div>
