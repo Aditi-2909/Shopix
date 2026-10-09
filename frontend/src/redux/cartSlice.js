@@ -1,35 +1,43 @@
-import { createSlice } from '@reduxjs/toolkit'
-
-const initialState = {
-  cartItems: localStorage.getItem('cartItems') ? JSON.parse(localStorage.getItem('cartItems')) : [],
-}
+import { createSlice } from "@reduxjs/toolkit";
 
 const cartSlice = createSlice({
-  name: 'cart',
-  initialState,
+  name: "cart",
+  initialState: {
+    cartItems: JSON.parse(localStorage.getItem("shopnest-cart") || "[]"),
+  },
   reducers: {
     addToCart: (state, action) => {
-      const item = action.payload
-      const existItem = state.cartItems.find((x) => x._id === item._id)
-      if (existItem) {
-        // In a real application, you might want to update the quantity instead
-        state.cartItems = state.cartItems.map((x) => x._id === existItem._id ? item : x)
+      const item = action.payload;
+      const exist = state.cartItems.find(p => p.productId === item.productId);
+      if (exist) {
+        state.cartItems = state.cartItems.map(p =>
+          p.productId === item.productId ? { ...p, qty: p.qty + (item.qty || 1) } : p
+        );
       } else {
-        state.cartItems = [...state.cartItems, item]
+        state.cartItems.push({ ...item, qty: item.qty || 1 });
       }
-        localStorage.setItem('cartItems', JSON.stringify(state.cartItems))
+      localStorage.setItem("shopnest-cart", JSON.stringify(state.cartItems));
+    },
+    updateQty: (state, action) => {
+      const { productId, qty } = action.payload;
+      if (qty < 1) {
+        state.cartItems = state.cartItems.filter(p => p.productId !== productId);
+      } else {
+        state.cartItems = state.cartItems.map(p => p.productId === productId ? { ...p, qty } : p);
+      }
+      localStorage.setItem("shopnest-cart", JSON.stringify(state.cartItems));
     },
     removeFromCart: (state, action) => {
-      const itemId = action.payload
-      state.cartItems = state.cartItems.filter((x) => x._id !== itemId)
-      localStorage.setItem('cartItems', JSON.stringify(state.cartItems))
+      state.cartItems = state.cartItems.filter(p => p.productId !== action.payload);
+      localStorage.setItem("shopnest-cart", JSON.stringify(state.cartItems));
     },
+    // NEW - eta add kor
     clearCart: (state) => {
-      state.cartItems = []
-      localStorage.removeItem('cartItems')
+      state.cartItems = [];
+      localStorage.removeItem("shopnest-cart");
     }
-  }
+  },
 });
 
-export const { addToCart, removeFromCart, clearCart } = cartSlice.actions
-export default cartSlice.reducer
+export const { addToCart, updateQty, removeFromCart, clearCart } = cartSlice.actions;
+export default cartSlice.reducer;

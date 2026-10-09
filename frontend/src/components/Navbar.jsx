@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import logo from '../assets/Shopix Logo.jpeg'
 import { AuthContext } from '../context/AuthContext'
@@ -6,12 +6,26 @@ import { useSelector } from 'react-redux'
 
 const Navbar = () => {
     const { user, logout } = useContext(AuthContext);
-    //const cartItems = useSelector((state) => state.cart.cartItems);
     const cartItems = useSelector((state) => state.cart?.cartItems || []);
     const navigate = useNavigate();
+    const [avatar, setAvatar] = useState(localStorage.getItem('shopix_avatar') || null);
+
+    // Avatar sync - profile theke change korle navbar e auto asbe
+    useEffect(() => {
+        const updateAvatar = () => setAvatar(localStorage.getItem('shopix_avatar'));
+        window.addEventListener('storage', updateAvatar);
+        window.addEventListener('avatarUpdated', updateAvatar);
+        const interval = setInterval(updateAvatar, 1000);
+        return () => {
+            window.removeEventListener('storage', updateAvatar);
+            window.removeEventListener('avatarUpdated', updateAvatar);
+            clearInterval(interval);
+        };
+    }, []);
 
     const handleLogout = () => {
         logout();
+        localStorage.removeItem('shopix_avatar');
         navigate('/login');
     };
 
@@ -31,7 +45,7 @@ const Navbar = () => {
                     </span>
                 </Link>
 
-                {/* Links - Video er structure e, kintu Tailwind style e */}
+                {/* Links */}
                 <ul className="flex items-center gap-2 sm:gap-5 text-[14px] font-medium">
                     <li>
                         <Link to="/shop" className="text-white/80 hover:text-white hover:bg-white/10 px-4 py-2 rounded-full transition-all">
@@ -44,11 +58,18 @@ const Navbar = () => {
                         </Link>
                     </li>
 
-                    {user ? (
+                    {user? (
                         <>
                             <li>
-                                <Link to="/profile" className="text-white/80 hover:text-white px-3 py-2 transition-colors">
-                                    Hi, {user.name}
+                                <Link to="/profile" className="flex items-center gap-2.5 text-white/80 hover:text-white px-2 py-1 rounded-full hover:bg-white/10 transition-all group">
+                                    <span className="hidden sm:block">Hi, {user.name?.split(' ')[0]}</span>
+                                    <div className="w-9 h-9 rounded-full overflow-hidden bg-[#F9C301] border-2 border-[#F9C301]/30 flex items-center justify-center text-black font-black text-sm group-hover:border-[#F9C301] group-hover:scale-105 transition-all">
+                                        {avatar? (
+                                            <img src={avatar} alt="profile" className="w-full h-full object-cover" />
+                                        ) : (
+                                            user.name? user.name[0].toUpperCase() : 'U'
+                                        )}
+                                    </div>
                                 </Link>
                             </li>
                             {user.role === 'admin' && (
