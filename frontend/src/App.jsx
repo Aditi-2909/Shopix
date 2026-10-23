@@ -14,14 +14,15 @@ import Cart from './pages/Cart'
 import Checkout from './pages/Checkout'
 import OrderSuccess from './pages/OrderSuccess'
 import Profile from './pages/Profile'
+import OrderDetails from './pages/OrderDetails'
 
 function App() {
   return (
-  
+
     <div className="min-h-screen flex flex-col">
       <Navbar />
 
-      
+
       <main className="flex-1">
         <Routes>
           <Route path="/" element={<Home />} />
@@ -36,6 +37,7 @@ function App() {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/order-success" element={<OrderSuccess />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/order/:id" element={<OrderDetails />} />
         </Routes>
       </main>
 
