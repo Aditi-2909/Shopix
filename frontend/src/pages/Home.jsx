@@ -10,9 +10,12 @@ const Home = () => {
     useEffect(() => {
         const fetchProducts = async () => {
             try{
-                const res = await fetch('http://localhost:5000/api/products')
+                const API = import.meta.env.VITE_BACKEND_URL || 'https://shopix-backend-y0sk.onrender.com';
+                const res = await fetch(`${API}/api/products`)
                 const data = await res.json();
-                setProducts(data.slice(0, 4));
+                // data array ba {products: []} du toi handle korbe
+                const list = Array.isArray(data) ? data : data.products || [];
+                setProducts(list.slice(0, 4));
             } catch (error) {
                 console.error('Error fetching products:', error);
             } finally {
