@@ -3,7 +3,7 @@ import React, { createContext, useState, useEffect } from "react";
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    // ✅ Refresh e localStorage theke load korbe
+    
     const [user, setUser] = useState(() => {
         try {
             const stored = localStorage.getItem("userInfo");
@@ -16,6 +16,8 @@ export const AuthProvider = ({ children }) => {
     const login = (userData) => {
         setUser(userData);
         localStorage.setItem("userInfo", JSON.stringify(userData));
+        // Admin login hole instant event
+        window.dispatchEvent(new Event("userUpdated"));
     };
 
     const logout = () => {
@@ -25,7 +27,10 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem("shopix_avatar");
     };
 
-    // ✅ Profile theke naam change er event sunbe - Navbar instant update hobe
+    // Admin check
+    const isAdmin = user?.role === 'admin';
+
+
     useEffect(() => {
         const syncUser = () => {
             try {
@@ -46,7 +51,7 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     return (
-        <AuthContext.Provider value={{ user, setUser, login, logout }}>
+        <AuthContext.Provider value={{ user, setUser, login, logout, isAdmin }}>
             {children}
         </AuthContext.Provider>
     )
