@@ -11,18 +11,20 @@ const Shop = () => {
   const [sort, setSort] = useState('newest')
   const [priceRange, setPriceRange] = useState(50000)
 
+  const API = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'
+
   const getImage = (p) => {
     let img = p.image || p.images?.[0] || p.imageUrl || p.thumbnail || ""
     if(!img) return "https://via.placeholder.com/400x500/111111/FFFFFF?text=Shopix"
     if(img.startsWith("http")) return img
-    if(img.startsWith("/")) return `http://localhost:5000${img}`
-    return `http://localhost:5000/${img}`
+    if(img.startsWith("/")) return `${API}${img}`
+    return `${API}/${img}`
   }
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const { data } = await axios.get('http://localhost:5000/api/products')
+        const { data } = await axios.get(`${API}/api/products`)
         const list = Array.isArray(data) ? data : data.products || []
         setProducts(list)
         setFiltered(list)
@@ -33,13 +35,13 @@ const Shop = () => {
       }
     }
     fetchProducts()
-  }, [])
+  }, [API])
 
   useEffect(() => {
     let result = [...products]
     if (search) result = result.filter(p => p.name.toLowerCase().includes(search.toLowerCase()))
     if (category !== 'All') result = result.filter(p => (p.category || '').toLowerCase() === category.toLowerCase())
-    result = result.filter(p => p.price <= priceRange)
+    result = result.filter(p => Number(p.price) <= Number(priceRange))
     
     if (sort === 'low') result.sort((a,b) => a.price - b.price)
     if (sort === 'high') result.sort((a,b) => b.price - a.price)
@@ -82,7 +84,7 @@ const Shop = () => {
               </select>
               <div className="flex-1 bg-[#111111] border border-white/10 rounded-full px-4 py-2.5 text-[12px] font-bold flex justify-between items-center">
                 <span className="text-white/40">Max:</span>
-                <input type="range" min="100" max="50000" value={priceRange} onChange={e=>setPriceRange(e.target.value)} className="w-20 accent-[#F9C301]"/>
+                <input type="range" min="100" max="50000" value={priceRange} onChange={e=>setPriceRange(Number(e.target.value))} className="w-20 accent-[#F9C301]"/>
                 <span>₹{priceRange}</span>
               </div>
             </div>
