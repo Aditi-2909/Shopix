@@ -3,7 +3,7 @@ const router = express.Router();
 const { protect } = require("../middleware/authMiddleware");
 const { registerUser, loginUser, getUsers, sendOtp } = require("../controllers/authController");
 const { admin } = require("../middleware/adminMiddleware");
-const User = require("../model/User");
+const User = require("../model/user");
 
 router.post("/send-otp", sendOtp); // NEW
 router.post("/register", registerUser);
