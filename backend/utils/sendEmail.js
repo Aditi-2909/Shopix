@@ -3,15 +3,14 @@ const nodemailer = require('nodemailer');
 const sendEmail = async (to, subject, text) => {
     try{
         const transporter = nodemailer.createTransport({
-            service: 'gmail', // small letter
+            service: 'gmail',
             auth: {
                 user: process.env.EMAIL_USER,
                 pass: process.env.EMAIL_PASS
             }
         });
         
-        // Connection check
-        await transporter.verify();
+        // await transporter.verify(); <-- ETA DELETE KORE DE
         
         const mailOptions = {
             from: `"Shopix" <${process.env.EMAIL_USER}>`,
@@ -32,7 +31,7 @@ const sendEmail = async (to, subject, text) => {
         return true;
     } catch (error) {
         console.log("REAL ERROR:", error.message);
-        throw error; // eta important, nahole controller bujhte parbe na fail koreche
+        throw error;
     }
 }
 
