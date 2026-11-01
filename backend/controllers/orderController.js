@@ -1,5 +1,5 @@
-const Order = require('../model/Order');
-const Product = require('../model/Product');
+const Order = require('../model/order');
+const Product = require('../model/product');
 const sendEmail = require('../utils/sendEmail');
 
 // Create order
