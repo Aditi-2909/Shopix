@@ -2,12 +2,14 @@ import { useState, useContext, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
+const API = import.meta.env.VITE_BACKEND_URL || 'https://shopix-backend-y0sk.onrender.com';
+
 const Register = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [otp, setOtp] = useState(["","","","","",""]);
-  const [step, setStep] = useState(1); // 1 = details, 2 = otp
+  const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [timer, setTimer] = useState(0);
   
@@ -26,7 +28,7 @@ const Register = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch('/api/auth/send-otp', { 
+      const res = await fetch(`${API}/api/auth/send-otp`, { 
         method: 'POST', 
         headers: { 'Content-Type': 'application/json' }, 
         body: JSON.stringify({ email }) 
@@ -64,7 +66,7 @@ const Register = () => {
     
     setLoading(true);
     try {
-      const res = await fetch('/api/auth/register', { 
+      const res = await fetch(`${API}/api/auth/register`, { 
         method: 'POST', 
         headers: { 'Content-Type': 'application/json' }, 
         body: JSON.stringify({ name, email, password, otp: finalOtp }) 
@@ -88,7 +90,7 @@ const Register = () => {
     if(timer>0) return;
     setLoading(true);
     try{
-      const res = await fetch('/api/auth/send-otp', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) });
+      const res = await fetch(`${API}/api/auth/send-otp`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) });
       if(res.ok){ setTimer(60); alert("OTP resent"); }
     } finally{ setLoading(false); }
   };
