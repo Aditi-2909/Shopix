@@ -60,7 +60,7 @@ const Checkout = () => {
         if (paymentMethod === 'cod') {
             setLoading(true);
             try {
-                const API = import.meta.env.VITE_API_URL || '';
+                const API = import.meta.env.VITE_BACKEND_URL || import.meta.env.VITE_API_URL || '';
                 const res = await fetch(`${API}/api/orders`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
@@ -77,7 +77,7 @@ const Checkout = () => {
         // Online payment with Razorpay
         setLoading(true);
         try {
-            const API = import.meta.env.VITE_API_URL || '';
+            const API = import.meta.env.VITE_BACKEND_URL || import.meta.env.VITE_API_URL || '';
             const res = await fetch(`${API}/api/payment/order`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ amount: Math.round(total) }) });
             const order = await res.json();
             if (!res.ok || !order.id) throw new Error(order.message || "Payment order failed");
